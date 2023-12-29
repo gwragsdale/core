@@ -1,51 +1,28 @@
-/*
-function roomArea(lengthInMeters, widthInMeters) {
-  let readlineSync = require('readline-sync');
+const readline = require('readline-sync');
+const SQ_FEET = 10.7639;
 
-  lengthInMeters = readlineSync.prompt('Enter the length of the room in meters: ');
-  widthInMeters = readlineSync.prompt('Enter the width of the room in meters: ');
+console.log(`Welcome to Room Area Calulater!`);
 
-  let areaInMeters = lengthInMeters * widthInMeters;
-  let areaInFeet = areaInMeters * 10.7639;
+console.log(`Enter the length of the room:`);
+let length = readline.question();
+length = Number(length);
 
-  console.log(`The area of the room is ${areaInMeters} square meters (${areaInFeet} square feet).`);
-}
+console.log(`Enter the width of the room:`);
+let width = readline.question();
+width = Number(width);
 
-roomArea();
-*/
+console.log(`Enter the unit of measurement:\n1) meters 2) feet`);
+let units = readline.question();
+units = Number(units);
 
-let readlineSync = require("readline-sync");
+let result = length * width;
 
-const SQMETERS_TO_SQFEET = 10.7639;
-
-console.log("Enter the unit of measure\n1) meters 2) feet.");
-let inputType = readlineSync.prompt();
-inputType = parseInt(inputType, 10);
-
-console.log("Enter the length of the room:");
-let length = readlineSync.prompt();
-length = parseInt(length, 10);
-
-console.log("Enter the width of the room:");
-let width = readlineSync.prompt();
-width = parseInt(width, 10);
-
-let area = (length * width);
-let areaInMeters;
-let areaInFeet;
-
-if (inputType === 1) {
-  areaInMeters = area;
-  areaInFeet = area * SQMETERS_TO_SQFEET;
-} else if (inputType === 2) {
-  areaInFeet = area;
-  areaInMeters = area / SQMETERS_TO_SQFEET;
-} else if (areaInMeters = area) {
+if (units === 1) {
   console.log(
-    `The area of the room is ${areaInMeters.toFixed(2)} square meters (${areaInFeet.toFixed(2)} square feet).`
+    `The area of the room is ${result} square meters (${result * SQ_FEET} square feet).`
     );
-} else if (areaInFeet = area) {
+} else {
   console.log(
-    `The area of the room is ${areaInFeet.toFixed(2)} square feet (${areaInMeters} square meters).`
+    `The area of the room is ${result} square feet (${result / SQ_FEET} square meters).`
   );
-};
+}
