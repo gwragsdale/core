@@ -1,0 +1,16 @@
+{
+  "en" : {
+    "welcome" : "Welcome to Calculator!",
+    "firstNumber" : "What's the first number?",
+    "invalidNumber" : "Hmm...that doesn't look like a valid number.",
+    "secondNumber" : "What's the second number?",
+    "operatorQuestion" : "What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide",
+    "invalidOperator" : "Must choose 1, 2, 3, or 4",
+    "finalQuestion" : "Would you like to perform another operation? (y/n)"
+  },
+  
+  "es" : {
+    "welcome": "Bienvenido a la calculadora! Entre su nombre:",
+    "validName": "Asegúrese de entrar un nombre válido."
+  }
+}
