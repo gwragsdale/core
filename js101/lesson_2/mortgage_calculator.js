@@ -1,12 +1,3 @@
-// START
-
-// GET loan amount
-// GET APR
-// GET loan duration (in duration of months)
-
-// monthlyPayment = 
-//    loanAmount * (monthlyInterest / (1 - Math.pow(1 + monthlyInterest), (-loanDuration)))
-
 let readline = require('readline-sync');
 
 function prompt(message) {
@@ -14,8 +5,8 @@ function prompt(message) {
 }
 
 function invalidNumber(number) {
-  return number.trimStart() === '' || 
-         Number.isNaN(Number(number)) || 
+  return number.trimStart() === '' ||
+         Number.isNaN(Number(number)) ||
          Number(number) < 0;
 }
 
@@ -29,7 +20,7 @@ while (invalidNumber(loanAmount)) {
   loanAmount = readline.question();
 }
 
-loanAmount = Number.parseFloat(loanAmount).toFixed(2); 
+loanAmount = Number.parseFloat(loanAmount).toFixed(2);
 
 prompt('Enter the Annual Percentage Rate:');
 let APR = readline.question();
@@ -49,8 +40,11 @@ while (invalidNumber(loanDurationInYears)) {
   loanDurationInYears = readline.question();
 }
 
-let loanDurationInMonths = (Number.parseInt(loanDurationInYears)) * 12; 
+let loanDurationInMonths = (Number.parseInt(loanDurationInYears, 10)) * 12;
 
-let monthlyPayment = (loanAmount * (monthlyInterest / (1 - Math.pow((1 + monthlyInterest), (-loanDurationInMonths))))).toFixed(2);
+let monthlyPayment = (loanAmount *
+                     (monthlyInterest /
+                     (1 - Math.pow((1 + monthlyInterest),
+                       (-loanDurationInMonths))))).toFixed(2);
 
 prompt(`Your monthly mortgage payment is $${monthlyPayment}.`);
