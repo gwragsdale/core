@@ -1,32 +1,26 @@
 const readline = require('readline-sync');
 const VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock'];
 
-function displayWinner(choice, computerChoice) {
+function playerWins(choice, computerChoice) {
+  return (choice === 'rock' && computerChoice === 'scissors') ||
+        (choice === 'rock' && computerChoice === 'lizard') ||
+        (choice === 'scissors' && computerChoice === 'paper') ||
+        (choice === 'scissors' && computerChoice === 'lizard') ||
+        (choice === 'paper' && computerChoice === 'rock') ||
+        (choice === 'paper' && computerChoice === 'spock') ||
+        (choice === 'spock' && computerChoice === 'rock') ||
+        (choice === 'spock' && computerChoice === 'scissors') ||
+        (choice === 'lizard' && computerChoice === 'spock') ||
+        (choice === 'lizard' && computerChoice === 'paper');
+}
 
-  if ((choice === 'rock' && computerChoice === 'scissors') || 
-      (choice === 'rock' && computerChoice === 'lizard') ||
-      (choice === 'scissors' && computerChoice === 'paper') ||
-      (choice === 'scissors' && computerChoice === 'lizard') ||
-      (choice === 'paper' && computerChoice === 'rock') ||
-      (choice === 'paper' && computerChoice === 'spock') ||
-      (choice === 'spock' && computerChoice === 'rock') ||
-      (choice === 'spock' && computerChoice === 'scissors') ||
-      (choice === 'lizard' && computerChoice === 'spock') ||
-      (choice === 'lizard' && computerChoice === 'paper')) {
+function displayWinner(choice, computerChoice) {
+  if (playerWins(choice, computerChoice)) {
     return "You won!";
-  } else if ((computerChoice === 'rock' && choice === 'scissors') || 
-            (computerChoice === 'rock' && choice === 'lizard') ||
-            (computerChoice === 'scissors' && choice === 'paper') ||
-            (computerChoice === 'scissors' && choice === 'lizard') ||
-            (computerChoice === 'paper' && choice === 'rock') ||
-            (computerChoice === 'paper' && choice === 'spock') ||
-            (computerChoice === 'spock' && choice === 'rock') ||
-            (computerChoice === 'spock' && choice === 'scissors') ||
-            (computerChoice === 'lizard' && choice === 'spock') ||
-            (computerChoice === 'lizard' && choice === 'paper')) {
-    return "CPU won!";
-  } else {
+  } else if (choice === computerChoice) {
     return "It's a tie!";
+  } else {
+    return "CPU won!";
   }
 }
 
