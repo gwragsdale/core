@@ -8,15 +8,15 @@ function foursAndNines(array) {
     if (num < arr[i + 1]) {
       foursAndNinesArray.push(arr[i + 1] - num);
     }});
-  
+
   return everythingElseArray.concat(foursAndNinesArray);
 }
 
 function romanToArabic(roman) {
   let romanArray = roman.split('');
-  
-  let arabicArray = romanArray.map(function(char) {
-    switch(char) {
+
+  let arabicArray = romanArray.map((char) => {
+    switch (char) {
       case 'M': return 1000;
       case 'D': return 500;
       case 'C': return 100;
@@ -25,7 +25,7 @@ function romanToArabic(roman) {
       case 'V': return 5;
       case 'I': return 1;
     }
-  }); 
+  });
 
   return foursAndNines(arabicArray).reduce((a, c) => a + c, 0);
 }
