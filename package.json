@@ -45,6 +45,7 @@
     "file-entry-cache": "^5.0.1",
     "flat-cache": "^2.0.1",
     "flatted": "^2.0.2",
+    "fraction.js": "github:infusion/Fraction.js",
     "fs.realpath": "^1.0.0",
     "function-bind": "^1.1.2",
     "functional-red-black-tree": "^1.0.1",
