@@ -3,6 +3,33 @@ const readline = require("readline-sync");
 const RPSGame = {
   human: createHuman(),
   computer: createComputer(),
+  comparison: {
+    moves: {
+      win: {
+        rock: ["scissors", 'lizard'],
+        paper: ["rock", "spock"],
+        scissors: ["paper", "lizard"],
+        lizard: ["spock", "paper"],
+        spock: ["rock", "scissors"],
+      },
+
+      loss: {
+        rock: ["paper", "spock"],
+        paper: ["scissors", "lizard"],
+        scissors: ["rock", "spock"],
+        lizard: ["rock", "scissors"],
+        spock: ["lizard", "paper"],
+      },
+    },
+
+    compareMoves(humanMove, computerMove) {
+      for (let status in this.moves) {
+        if (this.moves[status][humanMove].includes(computerMove)) return status;
+      }
+
+      return "tie";
+    },
+  },
 
   resetPlayers() {
     this.human.score = 0;
@@ -13,29 +40,26 @@ const RPSGame = {
 
   displayWelcomeMessage() {
     console.clear();
-    console.log('Welcome to Rock, Paper, Scissor! First player to 5 points wins!');
+    console.log('Welcome to Rock, Paper, Scissors, Lizard, Spock! First player to 5 points wins!');
   },
 
   displayGoodbyeMessage() {
-    console.log('Thanks for playing Rock, Paper, Scissors. Goodbye!');
+    console.log('Thanks for playing Rock, Paper, Scissors, Lizard, Spock. Goodbye!');
   },
 
   displayWinner() {
     let humanMove = this.human.move;
     let computerMove = this.computer.move;
+    let outcome = this.comparison.compareMoves(humanMove, computerMove);
 
     console.log(`You chose: ${this.human.move}`);
     console.log(`The computer chose: ${this.computer.move}`);
 
-    if ((humanMove === 'rock' && computerMove === 'scissors') ||
-        (humanMove === 'paper' && computerMove === 'rock') ||
-        (humanMove === 'scissors' && computerMove === 'paper')) {
-      console.log('You win!');
+    if (outcome === "win") {
+      console.log('You win the match!');
       this.human.score += 1;
-    } else if ((humanMove === 'rock' && computerMove === 'paper') ||
-               (humanMove === 'paper' && computerMove === 'scissors') ||
-               (humanMove === 'scissors' && computerMove === 'rock')) {
-      console.log('Computer wins!');
+    } else if (outcome === "loss") {
+      console.log('Computer wins the match!');
       this.computer.score += 1;
     } else {
       console.log("It's a tie");
@@ -89,6 +113,7 @@ function createPlayer() {
     move: null,
     score: 0,
     winner: false,
+    choices: ["rock", "paper", "scissors", "lizard", "spock"],
   };
 }
 
@@ -100,9 +125,9 @@ function createHuman() {
       let choice;
 
       while (true) {
-        console.log("Please choose rock, paper, or scissors:");
+        console.log("Please choose rock, paper, scissors, lizard, or spock:");
         choice = readline.question();
-        if (["rock", "paper", "scissors"].includes(choice)) break;
+        if (this.choices.includes(choice)) break;
         console.log("Sorry, invalid choice.");
       }
 
@@ -118,9 +143,8 @@ function createComputer() {
 
   let computerObj = {
     choose() {
-      let choices = ["rock", "paper", "scissors"];
-      let randomIndex = Math.floor(Math.random() * choices.length);
-      this.move = choices[randomIndex];
+      let randomIndex = Math.floor(Math.random() * this.choices.length);
+      this.move = this.choices[randomIndex];
     },
   };
 
