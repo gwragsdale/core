@@ -78,6 +78,8 @@ const RPSGame = {
   displayScore() {
     console.log(`Your score: ${this.human.score}`);
     console.log(`Computer score: ${this.computer.score}`);
+    console.log(this.human.historicalMoves);
+    console.log(this.computer.historicalMoves);
     if (this.human.score === 5) this.human.winner = true;
     else if (this.computer.score === 5) this.computer.winner = true;
   },
@@ -114,6 +116,14 @@ function createPlayer() {
     score: 0,
     winner: false,
     choices: ["rock", "paper", "scissors", "lizard", "spock"],
+
+    historicalMoves: {
+      rock: 0,
+      paper: 0,
+      scissors: 0,
+      lizard: 0,
+      spock: 0,
+    },
   };
 }
 
@@ -132,6 +142,7 @@ function createHuman() {
       }
 
       this.move = choice;
+      this.historicalMoves[choice] += 1;
     },
   };
 
@@ -145,6 +156,7 @@ function createComputer() {
     choose() {
       let randomIndex = Math.floor(Math.random() * this.choices.length);
       this.move = this.choices[randomIndex];
+      this.historicalMoves[this.move] += 1;
     },
   };
 
