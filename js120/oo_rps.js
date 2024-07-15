@@ -3,6 +3,7 @@ const readline = require("readline-sync");
 const RPSGame = {
   human: createHuman(),
   computer: createComputer(),
+
   comparison: {
     moves: {
       win: {
@@ -28,6 +29,22 @@ const RPSGame = {
       }
 
       return "tie";
+    },
+
+    getComputerLossRate() {
+      let computerMoves = Object.entries(RPSGame.computer.movesPlayed);
+      let lossRatePerMove = [];
+
+      computerMoves.forEach(moveTracker => {
+        let [move, tracker] = moveTracker;
+        let losses = tracker[1] - tracker[0];
+        let total = tracker[1];
+        let lossPercentage = ((losses / total) * 100);
+
+        lossRatePerMove.push([move, lossPercentage]);
+      });
+
+      return lossRatePerMove;
     },
   },
 
@@ -65,6 +82,8 @@ const RPSGame = {
       console.log("It's a tie");
     }
 
+    this.human.trackHumanMoves(outcome);
+    this.computer.trackComputerMoves(outcome);
     this.displayScore();
   },
 
@@ -78,8 +97,6 @@ const RPSGame = {
   displayScore() {
     console.log(`Your score: ${this.human.score}`);
     console.log(`Computer score: ${this.computer.score}`);
-    console.log(this.human.historicalMoves);
-    console.log(this.computer.historicalMoves);
     if (this.human.score === 5) this.human.winner = true;
     else if (this.computer.score === 5) this.computer.winner = true;
   },
@@ -90,8 +107,7 @@ const RPSGame = {
     while (true) {
       while (true) {
         this.human.choose();
-        this.computer.choose();
-        console.clear();
+        this.computer.choose(this.comparison.getComputerLossRate());
         this.displayWinner();
 
         if (this.human.winner) {
@@ -113,16 +129,16 @@ const RPSGame = {
 function createPlayer() {
   return {
     move: null,
-    score: 0,
     winner: false,
+    score: 0,
     choices: ["rock", "paper", "scissors", "lizard", "spock"],
 
-    historicalMoves: {
-      rock: 0,
-      paper: 0,
-      scissors: 0,
-      lizard: 0,
-      spock: 0,
+    movesPlayed: {  // if (movesPlayed.computer[move] percentage / 33% win rate)
+      rock: [0, 0], // then temporarily remove that from choices
+      paper: [0, 0],
+      scissors: [0, 0],
+      lizard: [0, 0],
+      spock: [0, 0],
     },
   };
 }
@@ -142,7 +158,11 @@ function createHuman() {
       }
 
       this.move = choice;
-      this.historicalMoves[choice] += 1;
+    },
+
+    trackHumanMoves(outcomeOfMatch) {
+      this.movesPlayed[this.move][1] += 1;
+      if (outcomeOfMatch === "win") this.movesPlayed[this.move][0] += 1;
     },
   };
 
@@ -153,10 +173,20 @@ function createComputer() {
   let playerObj = createPlayer();
 
   let computerObj = {
-    choose() {
-      let randomIndex = Math.floor(Math.random() * this.choices.length);
-      this.move = this.choices[randomIndex];
-      this.historicalMoves[this.move] += 1;
+    winningChoices: [],
+
+    choose(lossRate) {
+      let betterChoices = this.choices.filter((_move, idx) => {
+        return (lossRate[idx][1] < 30) || isNaN(lossRate[idx][1]);
+      }).concat(this.choices);
+      let randomIndex = Math.floor(Math.random() * betterChoices.length);
+      this.move = betterChoices[randomIndex];
+      console.clear();
+    },
+
+    trackComputerMoves(outcomeOfMatch) {
+      this.movesPlayed[this.move][1] += 1;
+      if (outcomeOfMatch === "loss") this.movesPlayed[this.move][0] += 1;
     },
   };
 
