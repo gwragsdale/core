@@ -164,6 +164,29 @@ class TTTGame {
     ['3', '5', '7'],
   ];
 
+  static joinOr(arr, delimiter = ", ", finalDelimiter = "or") {
+    let result = "";
+    if (arr.length === 2) {
+      return arr[0] + " " + finalDelimiter + " " + arr[1];
+    } else if (arr.length === 1) {
+      return arr[0];
+    }
+
+    for (let idx = 0; idx < arr.length; idx += 1) {
+      let currentElement = arr[idx];
+
+      if (idx < arr.length - 2) {
+        result += (currentElement + delimiter);
+      } else if (idx === arr.length - 2) {
+        result += (currentElement + delimiter + finalDelimiter + " ");
+      } else {
+        result += currentElement;
+      }
+    }
+
+    return result;
+  }
+
   constructor() {
     this.board = new Board();
     this.human = new Human();
@@ -172,20 +195,27 @@ class TTTGame {
 
   play() {
     this.displayWelcomeMessage();
-    this.board.display();
 
     while (true) {
-      this.humanMoves();
-      if (this.gameOver()) break;
+      this.board.display();
 
-      this.computerMoves();
-      if (this.gameOver()) break;
+      while (true) {
+        this.humanMoves();
+        if (this.gameOver()) break;
+
+        this.computerMoves();
+        if (this.gameOver()) break;
+
+        this.board.displayWithClear();
+      }
 
       this.board.displayWithClear();
+      this.displayResults();
+
+      if (this.playAgain()) this.resetBoard();
+      else break;
     }
 
-    this.board.displayWithClear();
-    this.displayResults();
     this.displayGoodbyeMessage();
   }
 
@@ -220,7 +250,7 @@ class TTTGame {
 
     while (true) {
       let validChoices = this.board.unusedSquares();
-      const prompt = `Choose a square (${validChoices.join(", ")}): `;
+      const prompt = `Choose a square (${TTTGame.joinOr(validChoices)}): `;
       choice = readline.question(prompt);
 
       if (validChoices.includes(choice)) break;
@@ -249,6 +279,26 @@ class TTTGame {
 
   someoneWon() {
     return this.isWinner(this.human) || this.isWinner(this.computer);
+  }
+
+  playAgain() {
+    while (true) {
+      let validAnswers = ['yes', 'no', 'y', 'n'];
+      let answer = readline.question("Would you like to play again? (y/n): ");
+
+      if (validAnswers.includes(answer.toLowerCase())) {
+        return answer.toLowerCase().startsWith('y');
+      }
+
+      console.log("Sorry, invalid answer.");
+    }
+  }
+
+  resetBoard() {
+    console.clear();
+    console.log("");
+    console.log("");
+    this.board = new Board();
   }
 }
 
