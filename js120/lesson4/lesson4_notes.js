@@ -1,94 +1,40 @@
-let readline = require('readline-sync');
-
-function createPlayer() {
-  return {
-    move: null,
-  };
+function Person(name) {
+  this.name = name;
+  this.school = undefined;
 }
 
-function createComputer() {
-  let playerObject = createPlayer();
-
-  let computerObject = {
-    choose() {
-      const choices = ['rock', 'paper', 'scissors'];
-      let randomIndex = Math.floor(Math.random() * choices.length);
-      this.move = choices[randomIndex];
-    },
-  };
-
-  return Object.assign(playerObject, computerObject);
-}
-
-function createHuman() {
-  let playerObject = createPlayer();
-  let humanObject = {
-    choose() {
-      let choice;
-
-      while (true) {
-        console.log('Please choose rock, paper, or scissors:');
-        choice = readline.question();
-        if (['rock', 'paper', 'scissors'].includes(choice)) break;
-        console.log('Sorry, invalid choice.');
-      }
-
-      this.move = choice;
-    },
-  };
-
-  return Object.assign(playerObject, humanObject);
-}
-
-const RPSGame = {
-  human: createHuman(),
-  computer: createComputer(),
-
-  displayWelcomeMessage() {
-    console.log('Welcome to Rock, Paper, Scissors!');
-  },
-
-  displayGoodbyeMessage() {
-    console.log('Thanks for playing Rock, Paper, Scissors. Goodbye!');
-  },
-
-  displayWinner() {
-    console.log(`You chose: ${this.human.move}`);
-    console.log(`The computer chose: ${this.computer.move}`);
-
-    let humanMove = this.human.move;
-    let computerMove = this.computer.move;
-
-    if ((humanMove === 'rock' && computerMove === 'scissors') ||
-        (humanMove === 'paper' && computerMove === 'rock') ||
-        (humanMove === 'scissors' && computerMove === 'paper')) {
-      console.log('You win!');
-    } else if ((humanMove === 'rock' && computerMove === 'paper') ||
-               (humanMove === 'paper' && computerMove === 'scissors') ||
-               (humanMove === 'scissors' && computerMove === 'rock')) {
-      console.log('Computer wins!');
-    } else {
-      console.log("It's a tie");
-    }
-  },
-
-  playAgain() {
-    console.log('Would you like to play again? (y/n)');
-    let answer = readline.question();
-    return answer.toLowerCase()[0] === 'y';
-  },
-
-  play() {
-    this.displayWelcomeMessage();
-    while (true) {
-      this.human.choose();
-      this.computer.choose();
-      this.displayWinner();
-      if (!this.playAgain()) break;
-    }
-
-    this.displayGoodbyeMessage();
-  },
+Person.prototype.speak = function() {
+  return `Hello, my name is ${this.name}.`;
 };
 
-RPSGame.play();
+function Child(name, school) {
+  Person.call(this, name);
+  this.school = school;
+}
+
+Child.prototype = Object.assign(Person.prototype);
+Child.prototype["constructor"] = Child;
+
+
+Child.prototype.learn = function() {
+  return "I'm going to school!";
+};
+
+let child = new Child("Suzy", "PS 33");
+console.log(child instanceof Child);                               // true
+console.log(child instanceof Person);                              // true
+console.log(Object.getPrototypeOf(child) === Child.prototype);     // true
+console.log(Object.getPrototypeOf(child).constructor === Child);   // true
+console.log(child.school === "PS 33");                             // true
+console.log(child.learn() === "I'm going to school!");             // true
+console.log(child.speak() === "Hello, my name is Suzy.");          // true
+console.log();
+
+let person = new Person("Pete");
+console.log(person instanceof Child === false);                    // true
+console.log(person instanceof Person);                             // true
+console.log(Object.getPrototypeOf(person) === Person.prototype);   // true
+console.log(Object.getPrototypeOf(person).constructor === Person); // true
+console.log(person.school === undefined);                          // true
+console.log(person.speak() === "Hello, my name is Pete.");         // true
+console.log(person.learn === undefined);                           // true
