@@ -245,12 +245,6 @@ class TTTGame {
     });
   }
 
-  isAboutToWin(player) {
-    return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
-      return this.board.countMarkersFor(player, row) === 2;
-    });
-  }
-
   markWinningSquare(player) {
     let squareToMark;
 
@@ -290,11 +284,11 @@ class TTTGame {
     let squareToBlock = this.markWinningSquare(this.human);
     let choice;
 
-    if (this.isAboutToWin(this.computer) && winningSquare) {           // offense
+    if (winningSquare) {           // offense
       choice = winningSquare;
-    } else if (this.isAboutToWin(this.human) && squareToBlock) {       // defense
+    } else if (squareToBlock) {    // defense
       choice = squareToBlock;
-    } else {                                          // random choice
+    } else {                       // random choice
       do {
         choice = Math.floor((9 * Math.random()) + 1).toString();
       } while (!validChoices.includes(choice));
