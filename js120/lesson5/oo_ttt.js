@@ -245,6 +245,28 @@ class TTTGame {
     });
   }
 
+  isAboutToWin(player) {
+    return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
+      return this.board.countMarkersFor(player, row) === 2;
+    });
+  }
+
+  markWinningSquare(player) {
+    let squareToMark;
+
+    TTTGame.POSSIBLE_WINNING_ROWS.forEach(row => {
+      if (this.board.countMarkersFor(player, row) === 2) {
+        row.forEach(square => {
+          if (this.board.squares[square].isUnused()) {
+            squareToMark = square;
+          }
+        });
+      }
+    });
+
+    return squareToMark;
+  }
+
   humanMoves() {
     let choice;
 
@@ -264,11 +286,19 @@ class TTTGame {
 
   computerMoves() {
     let validChoices = this.board.unusedSquares();
+    let winningSquare = this.markWinningSquare(this.computer);
+    let squareToBlock = this.markWinningSquare(this.human);
     let choice;
 
-    do {
-      choice = Math.floor((9 * Math.random()) + 1).toString();
-    } while (!validChoices.includes(choice));
+    if (this.isAboutToWin(this.computer) && winningSquare) {           // offense
+      choice = winningSquare;
+    } else if (this.isAboutToWin(this.human) && squareToBlock) {       // defense
+      choice = squareToBlock;
+    } else {                                          // random choice
+      do {
+        choice = Math.floor((9 * Math.random()) + 1).toString();
+      } while (!validChoices.includes(choice));
+    }
 
     this.board.markSquareAt(choice, this.computer.getMarker());
   }
