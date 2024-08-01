@@ -88,12 +88,10 @@ class Board {
   displayWithClear() {
     console.clear();
     console.log("");
-    console.log("");
     this.display();
   }
 
   display() {
-    console.log("");
     console.log("     |     |");
     console.log(`  ${this.squares["1"]}  |  ${this.squares["2"]}  |  ${this.squares["3"]}`);
     console.log("     |     |");
@@ -133,6 +131,7 @@ class Board {
 class Player {
   constructor(marker) {
     this.marker = marker;
+    this.score = 0;
   }
 
   getMarker() {
@@ -193,11 +192,11 @@ class TTTGame {
     this.computer = new Computer();
   }
 
-  play() {
-    this.displayWelcomeMessage();
+  play() {                          // fix bug after score reaches 3
+    this.displayWelcomeMessage();   // display match winner, and then goodbye message
 
     while (true) {
-      this.board.display();
+      this.openingDisplay();
 
       while (true) {
         this.humanMoves();
@@ -207,16 +206,33 @@ class TTTGame {
         if (this.gameOver()) break;
 
         this.board.displayWithClear();
+        this.displayScore();
       }
 
-      this.board.displayWithClear();
+      this.mainDisplay();
       this.displayResults();
 
+      if (this.matchOver()) break;
       if (this.playAgain()) this.resetBoard();
       else break;
     }
 
     this.displayGoodbyeMessage();
+  }
+
+  displayScore() {
+    console.log(`You: ${this.human.score} | Computer: ${this.computer.score}`);
+    console.log('');
+  }
+
+  openingDisplay() {
+    this.board.display();
+    this.displayScore();
+  }
+
+  mainDisplay() {
+    this.board.displayWithClear();
+    this.displayScore();
   }
 
   displayWelcomeMessage() {
@@ -232,8 +248,10 @@ class TTTGame {
   displayResults() {
     if (this.isWinner(this.human)) {
       console.log("You won! Congratulations!");
+      this.human.score += 1;
     } else if (this.isWinner(this.computer)) {
       console.log("I won! I won! Take that, HUman!");
+      this.computer.score += 1;
     } else {
       console.log("A tie game. How boring...");
     }
@@ -282,12 +300,15 @@ class TTTGame {
     let validChoices = this.board.unusedSquares();
     let winningSquare = this.markWinningSquare(this.computer);
     let squareToBlock = this.markWinningSquare(this.human);
+    let middleSquare = 5;
     let choice;
 
     if (winningSquare) {           // offense
       choice = winningSquare;
     } else if (squareToBlock) {    // defense
       choice = squareToBlock;
+    } else if (this.board.squares[middleSquare].isUnused()) {
+      choice = middleSquare;
     } else {                       // random choice
       do {
         choice = Math.floor((9 * Math.random()) + 1).toString();
@@ -298,7 +319,7 @@ class TTTGame {
   }
 
   gameOver() {
-    return this.board.isFull() || this.someoneWon();
+    return this.board.isFull() || this.someoneWon() || this.matchOver();
   }
 
   someoneWon() {
@@ -316,6 +337,10 @@ class TTTGame {
 
       console.log("Sorry, invalid answer.");
     }
+  }
+
+  matchOver() {
+    return this.human.score === 3 || this.computer.score === 3;
   }
 
   resetBoard() {
