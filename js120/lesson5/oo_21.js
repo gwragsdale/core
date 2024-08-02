@@ -110,7 +110,7 @@ class Player extends Participant {
 
   isPoor() {
     if (this.moneyAvailable <= 0) {
-      console.log("Sorry, you can't play again because YOU ARE OUT OF MONEY!");
+      console.log("Sorry, you can't play again because YOU ARE POOR!");
       return true;
     } else {
       return false;
@@ -138,6 +138,15 @@ class Dealer extends Participant {
 
   reveal() {
     return this.hand;
+  }
+
+  continueTurn() {
+    let keepGoing;
+
+    while (true) {
+      keepGoing = readline.question("Press RETURN to continue...");
+      if (keepGoing === "") break;
+    }
   }
 }
 
@@ -176,6 +185,7 @@ class TwentyOneGame {
   }
 
   displayGoodbyeMessage() {
+    console.clear();
     console.log("Thank you for playing Twenty-One! Goodbye.");
   }
 
@@ -235,6 +245,7 @@ class TwentyOneGame {
       } else if (this.dealer.score() < 17) {
         this.dealCards(this.dealer, 1);
         console.log("Dealer hits!");
+        this.dealer.continueTurn();
         this.showCards("reveal");
         console.log(`Dealer's score: ${this.dealer.score()}`);
       } else {
@@ -267,6 +278,7 @@ class TwentyOneGame {
   displayResult() {
     this.showCards("reveal");
     console.log(`Dealer's score: ${this.dealer.score()}`);
+    console.log("");
     let outcome = this.determineWinner();
 
     if (outcome === 'player') {
