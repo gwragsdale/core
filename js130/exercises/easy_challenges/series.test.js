@@ -1,0 +1,96 @@
+/*
+
+Write a program that will take a string of digits 
+and return all the possible consecutive number series of a specified length in that string.
+
+For example, the string "01234" has the following 3-digit series:
+
+    012
+    123
+    234
+
+Likewise, here are the 4-digit series:
+
+    0123
+    1234
+
+Finally, if you ask for a 6-digit series from a 5-digit string, you should throw an error.
+
+*/
+
+let Series = require('./series.js');
+
+describe("Series", () => {
+  test("test simple slices of one", () => {
+    let series = new Series('01234');
+    expect(series.slices(1)).toEqual([[0], [1], [2], [3], [4]]);
+  });
+
+  xtest("test simple slices of one again", () => {
+    let series = new Series('92834');
+    expect(series.slices(1)).toEqual([[9], [2], [8], [3], [4]]);
+  });
+
+  xtest("test simple slices of two", () => {
+    let series = new Series('01234');
+    expect(series.slices(2)).toEqual([[0, 1], [1, 2], [2, 3], [3, 4]]);
+  });
+
+  xtest("test other slices of two", () => {
+    let series = new Series('98273463');
+    let expected = [[9, 8], [8, 2], [2, 7], [7, 3], [3, 4], [4, 6], [6, 3]];
+    expect(series.slices(2)).toEqual(expected);
+  });
+
+  xtest("test simple slices of two again", () => {
+    let series = new Series('37103');
+    expect(series.slices(2)).toEqual([[3, 7], [7, 1], [1, 0], [0, 3]]);
+  });
+
+  xtest("test simple slices of three", () => {
+    let series = new Series('01234');
+    expect(series.slices(3)).toEqual([[0, 1, 2], [1, 2, 3], [2, 3, 4]]);
+  });
+
+  xtest("test simple slices of three again", () => {
+    let series = new Series('31001');
+    expect(series.slices(3)).toEqual([[3, 1, 0], [1, 0, 0], [0, 0, 1]]);
+  });
+
+  xtest("test other slices of three", () => {
+    let series = new Series('982347');
+    let expected = [[9, 8, 2], [8, 2, 3], [2, 3, 4], [3, 4, 7]];
+    expect(series.slices(3)).toEqual(expected);
+  });
+
+  xtest("test simple slices of four", () => {
+    let series = new Series('01234');
+    expect(series.slices(4)).toEqual([[0, 1, 2, 3], [1, 2, 3, 4]]);
+  });
+
+  xtest("test simple slices of four again", () => {
+    let series = new Series('91274');
+    expect(series.slices(4)).toEqual([[9, 1, 2, 7], [1, 2, 7, 4]]);
+  });
+
+  xtest("test simple slices of five", () => {
+    let series = new Series('01234');
+    expect(series.slices(5)).toEqual([[0, 1, 2, 3, 4]]);
+  });
+
+  xtest("test simple slices of five again", () => {
+    let series = new Series('81228');
+    expect(series.slices(5)).toEqual([[8, 1, 2, 2, 8]]);
+  });
+
+  xtest("test simple slice that blows up", () => {
+    let series = new Series('01234');
+    expect(() => { series.slices(6) }).toThrow();
+  });
+
+  xtest("test more complicated slice that blows up", () => {
+    let sliceString = '01032987583';
+    let series = new Series(sliceString);
+    expect(() => { series.slices(sliceString.length+1) }).toThrow();
+  });
+});
