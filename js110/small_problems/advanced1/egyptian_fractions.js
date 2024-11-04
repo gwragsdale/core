@@ -56,56 +56,36 @@ console.log(egyptian(new Fraction(3, 1)));
 
 const Fraction = require('fraction.js');
 
-function egyptian(fractionObj) {
-  let result = [];
-  let remainder = fractionObj;
-  let unitFract;
+function egyptian(fraction) {
+  let unitFractions = [];
 
-  while (true) {
-    if (fractionObj > 1) {
-      result.push(1);
-      unitFract = 1;
-    } else {
-      unitFract = new Fraction(1, Math.ceil(remainder.d / remainder.n));
-      result.push(unitFract.d);
-    }
-
-    remainder = new Fraction(fractionObj - unitFract);
-
-    if (remainder.n === 1 || remainder.n === 0) {
-      result.push(remainder.d);
-      break;
-    }
+  while (fraction.toFraction(true) !== "0") {
+    let unit = new Fraction(1, Math.ceil(fraction.d / fraction.n));
+    unitFractions.push(unit);
+    fraction = fraction.sub(unit);
   }
 
-  return result;
+  return unitFractions.map(num => num.d);
 }
 
-// console.log(egyptian(new Fraction(2, 15)));
-// console.log(egyptian(new Fraction(2, 1))); // -> [1, 2, 3, 6]
-// console.log(egyptian(new Fraction(137, 60))); // -> [1, 2, 3, 4, 5]
-// console.log(egyptian(new Fraction(3, 1)));
-// -> [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 230, 57960]
+function unegyptian(array) {
+  let originalFract = array
+    .map(num => new Fraction(1, num))
+    .reduce((sum, num) => {
+      return sum.add(num);});
 
-let egyptianFraction = new Fraction(137, 60);
-let denominators = [];
-
-denominators.push(Math.ceil(egyptianFraction.d / egyptianFraction.n));
-console.log(denominators);
-
-let unitFraction = new Fraction(1, denominators[denominators.length - 1]);
-egyptianFraction = new Fraction(egyptianFraction - unitFraction); // 77/60
-
-if (egyptianFraction >= 1 && denominators.includes(1)) {
-  denominators.push(2);
-  egyptianFraction = new Fraction(egyptianFraction - Fraction(1, 2));
+  return originalFract.n / originalFract.d;
 }
 
-console.log(egyptianFraction);
+console.log(egyptian(new Fraction(2, 1))); // -> [1, 2, 3, 6]
+console.log(egyptian(new Fraction(137, 60))); // -> [1, 2, 3, 4, 5]
+console.log(egyptian(new Fraction(3, 1))); // -> [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 230, 57960]
 
-unitFraction = new Fraction(1, Math.ceil(egyptianFraction.d / egyptianFraction.n));
-denominators.push(unitFraction.d);
-egyptianFraction = new Fraction(egyptianFraction - unitFraction);
-
-console.log(denominators);
-console.log(unitFraction);
+console.log(unegyptian(egyptian(new Fraction(1, 2)))); // logs 0.5
+console.log(unegyptian(egyptian(new Fraction(3, 4)))); // logs 0.75
+console.log(unegyptian(egyptian(new Fraction(39, 20)))); // logs 1.95
+console.log(unegyptian(egyptian(new Fraction(127, 130)))); // logs 0.9769230769230768
+console.log(unegyptian(egyptian(new Fraction(5, 7)))); // logs 0.7142857142857142
+console.log(unegyptian(egyptian(new Fraction(1, 1)))); // logs 1
+console.log(unegyptian(egyptian(new Fraction(2, 1)))); // logs 2
+console.log(unegyptian(egyptian(new Fraction(3, 1)))); // logs 3

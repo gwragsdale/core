@@ -3,7 +3,7 @@
 Create a clock that is independent of date.
 
 You should be able to add minutes to and subtract minutes from the time represented 
-by a given Clock object. Note that you should not mutate Clock objects 
+by a given Clock object. Note that you should not mutate Clock objects
 when adding and subtracting minutes -- create a new Clock object.
 
 Two clock objects that represent the same time should be equal to each other.
@@ -20,75 +20,75 @@ describe("Clock", () => {
     expect(Clock.at(9).toString()).toBe('09:00');
   });
 
-  xtest("past the hour", () => {
+  test("past the hour", () => {
     expect(Clock.at(11, 9).toString()).toBe('11:09');
   });
 
-  xtest("add a few minutes", () => {
+  test("add a few minutes", () => {
     let clock = Clock.at(10).add(3);
     expect(clock.toString()).toBe('10:03');
   });
 
-  xtest("adding does not mutate", () => {
+  test("adding does not mutate", () => {
     let oldClock = Clock.at(10);
     let newClock = oldClock.add(3);
     expect(newClock).not.toBe(oldClock);
   });
 
-  xtest("subtract fifty minutes", () => {
+  test("subtract fifty minutes", () => {
     let clock = Clock.at(0).subtract(50);
     expect(clock.toString()).toBe('23:10');
   });
 
-  xtest("subtracting does not mutate", () => {
+  test("subtracting does not mutate", () => {
     let oldClock = Clock.at(10);
     let newClock = oldClock.subtract(50);
     expect(newClock).not.toBe(oldClock);
   });
 
-  xtest("add over an hour", () => {
+  test("add over an hour", () => {
     let clock = Clock.at(10).add(61);
     expect(clock.toString()).toBe('11:01');
   });
 
-  xtest("wrap around at midnight", () => {
+  test("wrap around at midnight", () => {
     let clock = Clock.at(23, 30).add(60);
     expect(clock.toString()).toBe('00:30');
   });
 
-  xtest("add more than a day", () => {
+  test("add more than a day", () => {
     let clock = Clock.at(10).add(3061);
     expect(clock.toString()).toBe('13:01');
   });
 
-  xtest("subtract a few minutes", () => {
+  test("subtract a few minutes", () => {
     let clock = Clock.at(10, 30).subtract(5);
     expect(clock.toString()).toBe('10:25');
   });
 
-  xtest("subtract minutes", () => {
+  test("subtract minutes", () => {
     let clock = Clock.at(10).subtract(90);
     expect(clock.toString()).toBe('08:30');
   });
 
-  xtest("equivalent clocks", () => {
+  test("equivalent clocks", () => {
     let clock1 = Clock.at(15, 37);
     let clock2 = Clock.at(15, 37);
 
     expect(clock1.isEqual(clock2)).toBe(true);
   });
 
-  xtest("wrap around at negative midnight", () => {
+  test("wrap around at negative midnight", () => {
     let clock = Clock.at(0, 30).subtract(60);
     expect(clock.toString()).toBe('23:30');
   });
 
-  xtest("subtract more than a day", () => {
+  test("subtract more than a day", () => {
     let clock = Clock.at(10).subtract(3061);
     expect(clock.toString()).toBe('06:59');
   });
 
-xtest("inequivalent clocks", () => {
+test("inequivalent clocks", () => {
     let clock1 = Clock.at(15, 37);
     let clock2 = Clock.at(15, 36);
     let clock3 = Clock.at(14, 37);
@@ -97,7 +97,7 @@ xtest("inequivalent clocks", () => {
     expect(clock1.isEqual(clock3)).toBe(false);
   });
 
-  xtest("wrap around backwards", () => {
+  test("wrap around backwards", () => {
     let clock = Clock.at(0, 30).subtract(60);
     expect(clock.toString()).toEqual('23:30');
   });

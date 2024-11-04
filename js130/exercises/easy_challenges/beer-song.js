@@ -1,60 +1,48 @@
-class BeerSong {
-  static verse(num, endNum) {
-    let result = "";
-    let start = this.assignNumbers(num, endNum)[0];
-    let end = this.assignNumbers(num, endNum)[1];
+const BeerSong = {
+  lastVerse: "No more bottles of beer on the wall, no more " +
+             "bottles of beer.\nGo to the store and buy some " +
+             "more, 99 bottles of beer on the wall.\n",
+
+  verse(num) {
+    let line1 = `${num} bottles of beer on the wall, ${num} bottles of beer.\n`;
+    let line2 = `Take one down and pass it around, ${num - 1} bottles of beer `;
+    let line3 = `on the wall.\n`;
+
+    if (num > 2) {
+      return line1.concat(line2, line3);
+    } else if (num === 2) {
+      return line1.concat("Take one down and pass it around, 1 bottle of beer on the wall.\n");
+    } else if (num === 1) {
+      return "1 bottle of beer on the wall, 1 bottle of beer.\n" +
+             "Take it down and pass it around, no more bottles " +
+             "of beer on the wall.\n";
+    } else if (num === 0) {
+      return this.lastVerse;
+    }
+  },
+
+  verses(start, end) {
+    let songVerses = "";
+    let count = 0;
 
     while (start >= end) {
-      if (start > 0 && start !== end) {
-        result += `\n\n` + this.getVerse(start);
-      } else if (start > 0 && start === end) {
-        result += this.getVerse(start);
+      if (count === 0) {
+        songVerses += this.verse(start);
       } else {
-        result += this.getLastVerse();
+        songVerses += `\n`;
+        songVerses += this.verse(start);
       }
+
       start -= 1;
     }
 
-    return result;
-  }
+    return songVerses;
+  },
 
-  static verses(num, endNum) {
-    return this.verse(num, endNum);
-  }
-
-  static lyrics() {
-    return this.verse();
-  }
-
-  static assignNumbers(start, end) {
-    if (start === undefined && end === undefined) return [99, 0];
-    if (start !== undefined && end === undefined) return [start, start];
-    if (start !== undefined && end !== undefined) return [start, end];
-  }
-
-  static getVerse(num) {
-    let nextNum = num - 1;
-    let bottles = num > 1 ? "bottles" : "bottle";
-    let nextBottles;
-
-    if (nextNum === 0) {
-      nextBottles = "no more bottles";
-    } else if (nextNum === 1) {
-      nextBottles = "bottle";
-    } else {
-      nextBottles = "bottles";
-    }
-
-    return `${num} ${bottles} of beer on the wall, ${num} ${bottles} of beer.\n` +
-           `Take ${num === 1 ? "it" : "one"} down and pass it around,${nextNum > 0 ? ` ${nextNum}` : ""} ${nextBottles} of beer on the wall.\n`;
-  }
-
-  static getLastVerse() {
-    return "No more bottles of beer on the wall, no more " +
-            "bottles of beer.\nGo to the store and buy some " +
-            "more, 99 bottles of beer on the wall.\n";
-  }
-}
+  lyrics() {
+    return this.verses(99, 0);
+  },
+};
 
 console.log(BeerSong.verses(99, 98));
 
