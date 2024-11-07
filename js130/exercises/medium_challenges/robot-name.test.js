@@ -33,13 +33,13 @@ describe("Robot Name", () => {
     expect(new Robot().name()).toMatch(NAME_REGEXP);
   });
 
-  xtest("name sticks", () => {
+  test("name sticks", () => {
     let robot = new Robot();
     let name = robot.name();
     expect(robot.name()).toBe(name);
   });
 
-  xtest("different robots have different names", () => {
+  test("different robots have different names", () => {
     Math.seedrandom(DIFFERENT_ROBOT_NAME_SEED);
 
     let robot1 = new Robot();
@@ -48,7 +48,7 @@ describe("Robot Name", () => {
     expect(robot1.name()).not.toBe(robot2.name());
   });
 
-  xtest("different name when chosen name is taken", () => {
+  test("different name when chosen name is taken", () => {
     Math.seedrandom(SAME_INITIAL_ROBOT_NAME_SEED);
     let robot1 = new Robot();
     Math.seedrandom(SAME_INITIAL_ROBOT_NAME_SEED);
@@ -56,7 +56,7 @@ describe("Robot Name", () => {
     expect(robot1.name()).not.toBe(robot2.name());
   });
 
-  xtest("reset name", () => {
+  test("reset name", () => {
     Math.seedrandom(DIFFERENT_ROBOT_NAME_SEED);
 
     let robot = new Robot();
