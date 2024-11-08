@@ -120,7 +120,14 @@ class Meetup {
   }
 
   getCurrentDate(day) {
-    return new Date(this.year, this.month - 1, day);
+    let date = new Date(this.year, this.month - 1, day);
+    // to account for months with less than 31 days:
+    while ((this.month - 1) !== date.getMonth()) {
+      day -= 1;
+      date = new Date(this.year, this.month - 1, day);
+    }
+
+    return date;
   }
 
   toString() {
@@ -128,7 +135,4 @@ class Meetup {
   }
 }
 
-function dateAsString(year, month, day) {
-  let date = new Date(year, month - 1, day);
-  return date.toString();
-}
+module.exports = Meetup;
