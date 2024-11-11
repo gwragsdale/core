@@ -73,6 +73,6 @@ class CustomSet {
 
     return new CustomSet(combinedSets);
   }
-
-  export.modules = CustomSet;
 }
+
+module.exports = CustomSet;
