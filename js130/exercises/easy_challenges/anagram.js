@@ -12,6 +12,8 @@ class Anagram {
         return undefined;
       } else if (this.sortWord(word) === sorted) {
         anagrams.push(word);
+      } else {
+        return undefined;
       }
     });
 

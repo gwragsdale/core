@@ -39,4 +39,6 @@ const Diamond = {
   },
 };
 
+console.log(Diamond.makeDiamond("Z"));
+
 module.exports = Diamond;
