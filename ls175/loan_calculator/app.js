@@ -3,9 +3,9 @@
 const HTTP = require('http');
 const PORT = 3000;
 const URL = require('url').URL;
-const APR = 5;
+const HANDLEBARS = require('handlebars');
 
-const HTML_START = `
+const SOURCE = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -31,11 +31,17 @@ const HTML_START = `
       }
 
       table {
-        font-size: 2rem;
+        font-size: 1.5rem;
       }
-
       th {
         text-align: right;
+      }
+      td {
+        text-align: center;
+      }
+      th,
+      td {
+        padding: 0.5rem;
       }
     </style>
   </head>
@@ -44,80 +50,78 @@ const HTML_START = `
       <h1>Loan Calculator</h1>
       <table>
         <tbody>
-`;
-
-const HTML_END = `
+          <tr>
+            <th>Amount:</th>
+            <td>
+              <a href="/?amount={{amountDecrement}}&duration={{duration}}">-100</a>
+            </td>
+            <td>$ {{amount}}</td>
+            <td>
+                <a href="/?amount={{amountIncrement}}&duration={{duration}}">+ 100</a>
+            </td>
+          </tr>
+          <tr>
+            <th>Duration:</th>
+            <td>
+              <a href="/?amount={{amount}}&duration={{durationDecrement}}">- 1 year</a>
+            </td>
+            <td>{{duration}} years</td>
+            <td>
+              <a href="/?amount={{amount}}&duration={{durationIncrement}}">+ 1 year</a>
+            </td>
+          </tr>
+          <tr>
+            <th>APR:<th>
+            <td colspan="3">{{apr}}%</td>
+          </tr>
+          <tr>
+            <th>Monthly payment:</th>
+            <td colspan="3">$ {{payment}}</td>
+          </tr>
         </tbody>
       </table>
     </article>
   </body>
-</html>`;
+</html>
+`;
+
+const LOAN_OFFER_TEMPLATE = HANDLEBARS.compile(SOURCE);
+
+function render(template, data) {
+  let html = template(data);
+  return html;
+}
 
 function getParams(path) {
   const myURL = new URL(path, `http://localhost:${PORT}`);
   return myURL.searchParams;
 }
 
-function calculateMonthlyPayment(amount, duration) {
-  let apr = (APR / 100) / 12;
-  return (amount * (apr / (1 - Math.pow((1 + apr), -duration)))).toFixed(2);
+function calculateMonthlyPayment(amount, duration, apr) {
+  let annualInterestRate = apr / 100;
+  let monthlyInterestRate = annualInterestRate / 12;
+  let months = Number(duration) * 12;
+  let payment = amount *
+      (monthlyInterestRate /
+      (1 - Math.pow((1 + monthlyInterestRate), (-months))));
+
+  return payment.toFixed(2);
 }
 
 function loanInfo(params) {
-  let amount = Number(params.get("amount"));
-  let years = Number(params.get("duration"));
-  let duration = years ? (years * 12) : 0; 
-  let monthly = calculateMonthlyPayment(amount, duration);
-  duration = params.get("duration");
+  const APR = 5;
+  let data = {};
 
-  let decreaseAmt = `/?amount=${amount - 100}&duration=${duration}`;
-  let increaseAmt = `/?amount=${amount + 100}&duration=${duration}`;
-  let decreaseDur;
-  let increaseDur;
-  if (years) {
-    decreaseDur = `/?amount=${amount}&duration=${years - 1}`;
-    increaseDur = `/?amount=${amount}&duration=${years + 1}`;
-  } else {
-    decreaseDur = `/?amount=${amount}&duration=${-1}`;
-    increaseDur = `/?amount=${amount}&duration=${1}`;
+  data.amount = Number(params.get('amount'));
+  data.amountIncrement = data.amount + 100;
+  data.amountDecrement = data.amount - 100;
+  data.duration = Number(params.get('duration'));
+  data.durationIncrement = data.duration + 1;
+  data.durationDecrement = data.duration - 1; 
+  data.apr = APR;
+  data.payment = calculateMonthlyPayment(data.amount, data.duration, APR);
 
-  }
-
-  return `
-  ${HTML_START}
-    <tr>
-      <th>Amount:</th>
-        <td>
-          <a href=${decreaseAmt}>- $100</a>
-        </td>
-        <td>$
-          ${amount}
-        </td>
-        <td>
-          <a href=${increaseAmt}>+ $100 </a>
-        </td>
-    </tr>
-    <tr>
-      <th>Duration:</th>
-      <td>
-        <a href=${decreaseDur}>- 1 year</a>
-      </td>
-      <td>
-        ${duration} years
-      </td>
-      <td>
-        <a href=${increaseDur}>+ 1 year</a>
-      </td>
-    </tr>
-    <tr>
-      <th>APR:</th>
-      <td colspan='3'>${APR}%</td>
-    </tr>
-    <tr>
-      <th>Monthly payment:</th>
-      <td colspan='3'>${monthly}<td>
-    </tr>
-    ${HTML_END}`;
+  return data;
 }
 
 const SERVER = HTTP.createServer((req, res) => {
@@ -127,7 +131,8 @@ const SERVER = HTTP.createServer((req, res) => {
     res.statusCode = 404;
     res.end();
   } else {
-    let content = loanInfo(getParams(path));
+    let data = loanInfo(getParams(path));
+    let content = render(LOAN_OFFER_TEMPLATE, data);
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
